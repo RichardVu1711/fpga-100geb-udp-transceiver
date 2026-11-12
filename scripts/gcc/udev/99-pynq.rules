@@ -1,0 +1,2 @@
+KERNEL=="fpga0", SUBSYSTEM=="misc", MODE="0664", GROUP="xilinx"
+SUBSYSTEM=="uio", MODE="0664", GROUP="xilinx"

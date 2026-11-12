@@ -1,0 +1,38 @@
+# Build artifacts
+build/
+*.o
+*.exe
+*.out
+sim_build
+__pycache__
+verilog-axi
+.Xil
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
+# Data files (large datasets)
+*.csv
+*.dat
+data/*
+*.xlsx
+
+# OS files
+.DS_Store
+Thumbs.db
+*.env
+*.vcd
+*.gtkw
+*.log
+*.jou
+*.str
+server.mk
+shared_tests
+CLAUDE.md
+
+# Test fixture needed by rtl_sim
+!data/sharedtest/
+data/sharedtest/*
+!data/sharedtest/iladata.csv
