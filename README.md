@@ -4,32 +4,23 @@ FPGA UDP/IP receive and transmit logic for a 100G Ethernet (CMAC) link on an RFS
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    NET([100G link]) <--> CMAC[CMAC]
+```text
+RX path (RXTop, 512-bit AXI-Stream)
 
-    subgraph PL[Programmable Logic]
-        direction LR
-        subgraph RX[RXTop]
-            direction TB
-            DEMUX[eth_demux] -->|UDP| CHK["check_rx_udp<br/>IPv4 + UDP checksum"]
-            CHK --> GATE["gate_pkt_buffer<br/>checksum gate"]
-            DEMUX -->|ARP| ARPOUT[marp_axis]
-        end
-        subgraph TX[TXTop]
-            direction TB
-            TXGATE[gate_tx_buffer] --> CRT["create_tx_udp<br/>header + checksum"]
-        end
-    end
+  100G link --> CMAC --> eth_demux --UDP--> check_rx_udp --> gate_pkt_buffer --> AXI DMA --> PS
+                             |              (IPv4+UDP csum)   (checksum gate)    (S2MM)
+                             +--ARP--> marp_axis
 
-    CMAC -->|"AXI-Stream 512b"| DEMUX
-    GATE -->|m00_axis| DMA[AXI DMA]
-    DMA -->|MM2S| TXGATE
-    CRT -->|m00_axis| CMAC
 
-    PS["PS: PYNQ Python firmware"] -. AXI-Lite config/status .-> RX
-    PS -.-> TX
-    PS <--> DMA
+TX path (TXTop, 512-bit AXI-Stream)
+
+  PS --> AXI DMA --> gate_tx_buffer --> create_tx_udp --> CMAC --> 100G link
+         (MM2S)                         (header + csum)
+
+
+Control
+
+  PS (PYNQ Python firmware) --AXI-Lite config/status--> RXTop, TXTop registers
 ```
 
 *Diagram made by Claude.*
